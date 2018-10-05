@@ -1,0 +1,16 @@
+Below you will find a CSV with SMS messages. These are various kind of SMS including banking transactions, Airtel, Paytm, etc
+
+Using regular expressions you have to parse different types of messages. It is upto you to make regular expressions for maximum different types of messages.
+
+After you parse these messages - you have to generate two things:
+1. account balances for different types of accounts (for example HDFC, etc) 
+2. total amount of transaction (debit + credit) for different types of accounts
+
+We prefer that you do this in python, however we are completely ok if you do this in any other language.
+
+to submit the solution, create a github account (unless you already have one) and create a repository called "mytest" in there. Upload the code there and send us the link
+
+
+
+
+
