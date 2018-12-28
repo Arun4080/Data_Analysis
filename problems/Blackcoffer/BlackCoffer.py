@@ -1,18 +1,18 @@
 import pandas as pd
-from nltk.corpus import stopwords
+#from nltk.corpus import stopwords
 import urllib
 import re
 
 #Extract data and take usefull data
-list=pd.read_excel("data/cik_list.xlsx")
+list=pd.read_excel("data/cik_list.xlsx").iloc[:,-1:]
 master_dic=pd.read_csv("data/Master_dic.csv")
 uncertainity_dic=pd.read_excel('data/uncertainty_dictionary.xlsx')
 constraining_dic=pd.read_excel('data/constraining_dictionary.xlsx')
+stop_words=pd.read_csv('data/StopWords_Generic.csv').values.T.tolist()[0]
 
 pos=[master_dic['Word'][i] for i in range(len(master_dic)) if master_dic['Positive'][i]==2009]
 neg=[master_dic['Word'][i] for i in range(len(master_dic)) if master_dic['Negative'][i]==2009]
 
-stop_words=stopwords.words('english')
 uncertainity_word=[i for i in uncertainity_dic['Word']]
 constraining_word=[i for i in constraining_dic['Word']]
 
@@ -62,24 +62,27 @@ def Sentimental_Analysis(page):
     asn=word_count/sentence_count
     pcw=complex_no/word_count
     fogIndex = 0.4*(asn+pcw)
+    p_pro=p/word_count;n_pro=n/word_count;uncer_pro=uncertainityWordCount/word_count;con_pro=constrainingWordCount/word_count
     
-    return(p,n,Pol,asn,pcw,fogIndex,complex_no,word_count,uncertainityWordCount,constrainingWordCount)
+    return(p,n,Pol,asn,pcw,fogIndex,complex_no,word_count,uncertainityWordCount,constrainingWordCount,p_pro,n_pro,uncer_pro,con_pro)
 
 #Open csv file for data saving
 file=open("data.csv",'w')
-file.write("Positive_score,Negitive_score,Polerity_Score,Average_Sentence_length,Percentage_of_complex_words,Fog_index,Complex_word_count,Word_count,Uncertainity_score,Constraining_score\n")
+file.write("Positive_score,Negitive_score,Polerity_Score,Average_Sentence_length,Percentage_of_complex_words,Fog_index,Complex_word_count,Word_count,Uncertainity_score,Constraining_score,Positive_word_proportion,Negative_word_proportion,Uncertainty_word_proportion,Constraining_word_proportion\n")
 
 #start Analysis
 my_links=["https://www.sec.gov/Archives/"+i for i in list['SECFNAME']]
 for i in my_links:
+    print(i)
     page=urllib.request.urlopen(i)
     a=Sentimental_Analysis(page)
-    file.write(str(a[0]) + "," + str(a[1]) + "," + str(a[2]) + "," + str(a[3]) + "," + str(a[4]) + "," + str(a[5]) + "," + str(a[6]) + "," + str(a[7]) + "," + str(a[8]) + "," + str(a[9]) + "\n")
+    file.write(str(a[0]) + "," + str(a[1]) + "," + str(a[2]) + "," + str(a[3]) + "," + str(a[4]) + "," + str(a[5]) + "," + str(a[6]) + "," + str(a[7]) + "," + str(a[8]) + "," + str(a[9]) + "," + str(a[10]) + "," + str(a[11]) + "," + str(a[12]) + "," + str(a[13]) +"\n")
 
 file.close()
+
 
 #Concatinate our data and cik_list file
 list=pd.read_excel("data/cik_list.xlsx")
 output=pd.read_csv("data.csv")
 final=pd.concat([list,output],axis=1)
-final.to_csv("final.csv",encoding='utf-8')
+final.to_csv("output.csv",encoding='utf-8')
